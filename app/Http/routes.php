@@ -11,6 +11,22 @@
 |
 */
 
+
+/**
+ * Admin
+ */
+Route::group(['prefix' => 'admin'], function () {
+
+    // Categories
+    Route::get('categories', ['as'=>'admin.categories', 'uses'=>'AdminCategoriesController@index']);
+
+    // Products
+    Route::get('products', ['as'=>'admin.products', 'uses'=>'AdminProductsController@index']);
+
+});
+
+
+
 Route::get('/', function () {
     return view('welcome');
 });
