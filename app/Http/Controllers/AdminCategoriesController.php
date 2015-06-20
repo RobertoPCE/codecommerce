@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use CodeCommerce\Http\Requests;
 use CodeCommerce\Http\Controllers\Controller;
 
+use CodeCommerce\Http\Requests\CategoryRequest;
+
 use CodeCommerce\Category;
 
 class AdminCategoriesController extends Controller
@@ -36,7 +38,7 @@ class AdminCategoriesController extends Controller
      */
     public function create()
     {
-        //
+        return view('categories.create');
     }
 
     /**
@@ -44,9 +46,15 @@ class AdminCategoriesController extends Controller
      *
      * @return Response
      */
-    public function store()
+    public function store( CategoryRequest $request )
     {
-        //
+        $input = $request->all();
+
+        $category = $this->categoryModel->fill($input);
+
+        $category->save();
+
+        return redirect()->route('admin.categories');
     }
 
     /**
@@ -55,10 +63,10 @@ class AdminCategoriesController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
-    {
-        //
-    }
+    // public function show($id)
+    // {
+    //     //
+    // }
 
     /**
      * Show the form for editing the specified resource.
@@ -66,9 +74,11 @@ class AdminCategoriesController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit( $id )
     {
-        //
+        $category = $this->categoryModel->find($id);
+
+        return view('categories.edit', compact('category'));
     }
 
     /**
@@ -77,9 +87,11 @@ class AdminCategoriesController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update( CategoryRequest $request, $id )
     {
-        //
+        $this->categoryModel->find($id)->update($request->all());
+
+        return redirect()->route('admin.categories');
     }
 
     /**
@@ -88,8 +100,10 @@ class AdminCategoriesController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy( $id )
     {
-        //
+        $this->categoryModel->find($id)->delete();
+
+        return redirect()->route('admin.categories');
     }
 }
