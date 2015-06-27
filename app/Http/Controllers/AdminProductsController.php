@@ -110,7 +110,13 @@ class AdminProductsController extends Controller
      */
     public function destroy( $id )
     {
-        $this->productModel->find($id)->delete();
+        $product = $this->productModel->find($id);
+
+        foreach( $product->images as $image ) {
+            $this->destroyImageFile( $image->id.'.'.$image->extension );
+        }
+
+        $product->delete();
 
         return redirect()->route('admin.products');
     }
@@ -145,15 +151,21 @@ class AdminProductsController extends Controller
     {
         $image = $productImage->find($id);
 
-        if( file_exists(public_path().'/uploads/'.$image->id.'.'.$image->extension) ) {
+        if( Storage::disk('public_local')->exists($image->id.'.'.$image->extension) ) {
             Storage::disk('public_local')->delete($image->id.'.'.$image->extension);
         }
 
         $product = $image->product;
         $image->delete();
 
-
         return redirect()->route('admin.products.images',['id'=>$product->id]);
+    }
+
+    protected function destroyImageFile( $file='' )
+    {
+        if( Storage::disk('public_local')->exists($file) ) {
+            Storage::disk('public_local')->delete($file);
+        }
     }
 
 }
